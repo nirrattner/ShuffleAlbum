@@ -9,7 +9,7 @@ const ReauthorizeButton = ({reauthorize}) => {
   }
   return (
     <div>
-      <div>Authorization failure detected</div>
+      <h3>Authorization failure detected -- one hour token most likely expired</h3>
       <Button
         bsSize="large"
         bsStyle="primary"

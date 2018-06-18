@@ -3,6 +3,8 @@ import { Button } from 'react-bootstrap';
 
 import * as AuthorizationUrlGenerator from  '../library/AuthorizationUrlGenerator';
 
+import '../../css/authorize-button.css';
+
 const AuthorizeButton = ({token}) => {
   if (token) {
     return null;
@@ -11,6 +13,7 @@ const AuthorizeButton = ({token}) => {
     <Button
       bsSize="large"
       bsStyle="primary"
+      className="authorize-button"
       href={AuthorizationUrlGenerator.generate()}
     >
       Authorize

@@ -10,7 +10,7 @@ const ShuffleButton = ({albumTotal, deviceId, onShuffle}) => {
       bsStyle="primary"
       className="shuffle-button"
       onClick={onShuffle}
-      disabled={albumTotal && !deviceId}
+      disabled={!albumTotal || !deviceId}
     >
       Next album
     </Button>
