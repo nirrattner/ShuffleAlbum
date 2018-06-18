@@ -1,0 +1,13 @@
+.album-display {
+  min-height: 325px;
+  padding-top: 15px;
+}
+
+.album-image {
+  text-align: right;
+}
+
+.album-label {
+  padding-top: 75px;
+  text-align: left;
+}
