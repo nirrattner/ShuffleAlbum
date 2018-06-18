@@ -9,7 +9,7 @@ const SCOPES = [
   'user-read-private',
 ];
 const LOCAL_REDIRECT = 'http://localhost:3000';
-const DEPLOYED_REDIRECT = '';
+const DEPLOYED_REDIRECT = 'https://nirrattner.github.io/ShuffleAlbum/';
 
 export function generate()  {
   const redirectUri = window.location.hostname.includes('local')
