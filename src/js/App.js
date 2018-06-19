@@ -22,7 +22,6 @@ class App extends Component {
       deviceId: null,
       devicesLoading: true,
       error: null,
-      loading: true,
       reauthorize: false,
       token: TokenExtractor.extract(),
     };
@@ -31,7 +30,7 @@ class App extends Component {
   componentDidMount() {
     const { token } = this.state;
     if (token) {
-      this.setState({ loading: true });
+      this.onDeviceFetch();
       new SpotifyPlayer(token, this.onDeviceFetch.bind(this));
       AlbumApi.get(token)
         .then(response => response.json())
