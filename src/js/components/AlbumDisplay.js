@@ -12,8 +12,8 @@ const AlbumDisplay = ({album}) => {
 
   return (
     <Row>
-      <Col className="album-image" xs={6} mdOffset={2} md={4}>
-        <img src={image.url} />
+      <Col className="album-image-wrapper" xs={6} mdOffset={2} md={4}>
+        <img className="album-image" src={image.url} />
       </Col>
       <Col className="album-label" xs={6} md={4}>
         <h3>{artistName}</h3>

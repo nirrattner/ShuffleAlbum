@@ -3,8 +3,14 @@
   padding-top: 15px;
 }
 
-.album-image {
+.album-image-wrapper {
+  display: flex;
   text-align: right;
+}
+
+.album-image {
+  max-width: 100%;
+  margin: auto 0;
 }
 
 .album-label {
