@@ -17,6 +17,7 @@ class App extends Component {
     super(props);
     this.state = {
       albumTotal: null,
+      albums: [],
       albumUri: null,
       devices: [],
       deviceId: null,
@@ -35,7 +36,10 @@ class App extends Component {
       AlbumApi.get(token)
         .then(response => response.json())
         .then(({ total: albumTotal }) => {
-          this.setState({ albumTotal });
+          this.setState({
+            albums: [...Array(albumTotal).keys()],
+            albumTotal,
+          });
         })
         .catch(this.onError.bind(this));
     }
@@ -66,7 +70,7 @@ class App extends Component {
       .then(({ devices }) => {
         const deviceId = devices.filter(device => device.is_active).map(device => device.id)[0] 
           || devices[0].id;
-        this.setState({ 
+        this.setState({
           deviceId,
           devices,
           devicesLoading: false,
@@ -76,16 +80,21 @@ class App extends Component {
   }
 
   onShuffle() {
-    const { albumTotal, deviceId, token } = this.state;
-    const offset = Math.floor(Math.random() * albumTotal);
+    const { albums, albumTotal, deviceId, token } = this.state;
+    const offset = albums.splice(Math.floor(Math.random() * albums.length), 1);
+    this.setState({
+      albums: albums.length !== 0
+        ? albums
+        : [...Array(albumTotal).keys()],
+    });
     AlbumApi.get(token, offset)
       .then(response => response.json())
       .then(({ items, total }) => {
         const album = items[0].album; 
         PlayApi.play(token, album.uri, deviceId);
-        this.setState({ 
-          album: album,
-          albumTotal: total,
+        this.setState({
+          album,
+          albumTotal: total
         });
       })
       .catch(this.onError.bind(this));
