@@ -1,5 +1,13 @@
 import React from 'react';
-import { Button, Col, Glyphicon, FormGroup, Grid, Panel, Radio, Row } from 'react-bootstrap';
+
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import Row from 'react-bootstrap/Row';
+import { ArrowClockwise } from 'react-bootstrap-icons';
 
 import Loading from './Loading';
 
@@ -7,42 +15,41 @@ import '../../css/device-chooser.css';
 
 const DeviceChooser = ({deviceId, devices, devicesLoading, onDeviceChange, onDeviceFetch}) => {
   const deviceChoices = devices.map(device => (
-    <Radio
+    <Form.Check
       name="device-choices"
+      type="radio"
       key={device.id}
       value={device.id}
       checked={device.id === deviceId}
+      label={device.name}
       onChange={onDeviceChange}
-    >
-      {device.name}
-    </Radio>  
+    />
   ));
 
   return (
-    <Grid>
-      <Row>
+    <Container fluid>
+      <Row className="justify-content-md-center">
         <Col md={6} mdOffset={3}>
-          <Panel>
-            <Panel.Heading>
+          <Card>
+            <Card.Header>
               <span>Available Devices</span>
               <Button
-                className="refresh-button"
-                bsSize="xsmall"
+                className="refresh-button btn-secondary btn-sm"
                 onClick={onDeviceFetch}
               >
-                <Glyphicon glyph="refresh" /> Refresh
+                <ArrowClockwise className="refresh-button-icon" /> Refresh
               </Button>
-            </Panel.Heading>
-            <Panel.Body>
-              <FormGroup className="device-chooser">
+            </Card.Header>
+            <Card.Body>
+              <Form className="device-chooser">
                 <Loading loading={devicesLoading} />
                 {deviceChoices}
-              </FormGroup>
-            </Panel.Body>
-          </Panel>
+              </Form>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
-    </Grid>
+    </Container>
   );
 };
 

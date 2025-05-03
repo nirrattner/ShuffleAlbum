@@ -4,5 +4,13 @@
 
 .refresh-button {
   position: absolute;
-  right: 25px;
+  right: 12px;
+  top: 7px;
+  --bs-btn-font-size: 0.7rem;
+  --bs-btn-padding-x: 0.3rem;
+  --bs-btn-padding-y: 0.2rem;
+}
+
+.refresh-button-icon {
+  vertical-align: middle;
 }

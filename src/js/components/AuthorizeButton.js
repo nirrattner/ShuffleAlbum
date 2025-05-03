@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 
 import '../../css/authorize-button.css';
 
@@ -9,9 +9,7 @@ const AuthorizeButton = ({authorizationUrl, token}) => {
   }
   return (
     <Button
-      bsSize="large"
-      bsStyle="primary"
-      className="authorize-button"
+      className="authorize-button btn-primary btn-lg"
       href={authorizationUrl}
     >
       Authorize

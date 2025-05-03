@@ -7,4 +7,4 @@ export function get(token, offset=0, limit=1) {
       headers: { Authorization : `Bearer ${token}` },
     })
     .then(AuthenticationFilter.authenticate);
-};
+}

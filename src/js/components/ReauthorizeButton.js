@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 
 const ReauthorizeButton = ({authorizationUrl, reauthorize}) => {
   if (!authorizationUrl || !reauthorize) {
@@ -7,10 +7,9 @@ const ReauthorizeButton = ({authorizationUrl, reauthorize}) => {
   }
   return (
     <div>
-      <h3>Authorization failure detected -- one hour token most likely expired</h3>
+      <h4>Authorization failure detected -- one hour token most likely expired</h4>
       <Button
-        bsSize="large"
-        bsStyle="primary"
+        className="btn-primary btn-lg"
         href={authorizationUrl}
       >
         Attempt to reauthorize

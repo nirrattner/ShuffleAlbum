@@ -1,5 +1,6 @@
 import React from 'react';
-import { Col, Row } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 
 import '../../css/album-display.css';
 
@@ -11,7 +12,7 @@ const AlbumDisplay = ({album}) => {
   const { images: [ , image ], name: albumName, artists: [{ name: artistName }]} = album;
 
   return (
-    <Row>
+    <Row className="justify-content-md-center">
       <Col className="album-image-wrapper" xs={6} mdOffset={2} md={4}>
         <img className="album-image" src={image.url} />
       </Col>

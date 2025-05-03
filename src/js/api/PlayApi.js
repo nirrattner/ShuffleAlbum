@@ -14,7 +14,7 @@ export function play(token, album, deviceId) {
       }
     })
     .then(AuthenticationFilter.authenticate);
-};
+}
 
 export function transfer(token, deviceId) {
   return fetch(
