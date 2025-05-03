@@ -1,10 +1,8 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 
-import * as AuthorizationUrlGenerator from  '../library/AuthorizationUrlGenerator';
-
-const ReauthorizeButton = ({reauthorize}) => {
-  if (!reauthorize) {
+const ReauthorizeButton = ({authorizationUrl, reauthorize}) => {
+  if (!authorizationUrl || !reauthorize) {
     return null;
   }
   return (
@@ -13,7 +11,7 @@ const ReauthorizeButton = ({reauthorize}) => {
       <Button
         bsSize="large"
         bsStyle="primary"
-        href={AuthorizationUrlGenerator.generate()}
+        href={authorizationUrl}
       >
         Attempt to reauthorize
       </Button>

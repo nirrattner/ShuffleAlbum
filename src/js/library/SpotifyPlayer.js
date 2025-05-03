@@ -1,20 +1,20 @@
 class SpotifyPlayer {
   constructor(
-    token,
-    onDeviceFetch) {
+        token,
+        onDeviceFetch) {
     this.token = token;
     this.playerPromise = window.spotifyReady
-      .then(() => {
+      .then(callback => {
         const player = new window.Spotify.Player({
           name: 'Shuffle Albums (This tab)',
           getOAuthToken: callback => { callback(token); }
         });
 
-        player.addListener('ready', ({ device_id }) => { 
-          onDeviceFetch();
-          console.log('Ready with Device ID', device_id); 
+        player.addListener('ready', ({device_id}) => {
+            onDeviceFetch();
+            console.log('Ready with Device ID', device_id);
         });
-        
+
         player.addListener('initialization_error', ({ message }) => { console.error(message); });
         player.addListener('authentication_error', ({ message }) => { console.error(message); });
         player.addListener('account_error', ({ message }) => { console.error(message); });
@@ -26,6 +26,6 @@ class SpotifyPlayer {
         return player;
       });
   }
-};
+}
 
 export default SpotifyPlayer;
