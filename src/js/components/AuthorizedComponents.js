@@ -9,14 +9,13 @@ const AuthorizedComponents = ({
   albumTotal, 
   deviceId,
   devices,
-  devicesLoading,
+  isDevicesLoading,
   token,
-  reauthorize,
   onDeviceChange,
   onDeviceFetch,
   onShuffle,
 }) => {
-  if (reauthorize || !token) {
+  if (!token) {
     return null;
   }
 
@@ -31,7 +30,7 @@ const AuthorizedComponents = ({
       <DeviceChooser
         deviceId={deviceId}
         devices={devices}
-        devicesLoading={devicesLoading}
+        isDevicesLoading={isDevicesLoading}
         token={token}
         onDeviceChange={onDeviceChange}
         onDeviceFetch={onDeviceFetch}

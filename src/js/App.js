@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import AuthorizeButton from './components/AuthorizeButton';
-import ReauthorizeButton from './components/ReauthorizeButton';
 import AuthorizedComponents from './components/AuthorizedComponents';
 
 import * as AlbumApi from './api/AlbumApi';
@@ -16,153 +15,124 @@ import SpotifyPlayer from './library/SpotifyPlayer';
 
 import '../css/app.css';
 
-class App extends Component {
-   constructor(props) {
-    super(props);
-    this.state = {
-      albumTotal: null,
-      albumUri: null,
-      albums: [],
-      authorizationUrl: null,
-      devices: [],
-      deviceId: null,
-      devicesLoading: true,
-      error: null,
-      reauthorize: false,
-      token: TokenStorage.getToken(),
-    };
-  }
+const App = () => {
+  const [album, setAlbum] = React.useState(null);
+  const [albumTotal, setAlbumTotal] = React.useState(0);
+  const [albumIndexes, setAlbumIndexes] = React.useState([]);
+  const [authorizationUrl, setAuthorizationUrl] = React.useState('');
+  const [devices, setDevices] = React.useState([]);
+  const [deviceId, setDeviceId] = React.useState('');
+  const [isDevicesLoading, setDevicesLoading] = React.useState(true);
+  const [token, setToken] = React.useState(TokenStorage.getToken());
 
-  componentDidMount() {
-    const { token } = this.state;
-    const code = CodeExtractor.extract();
-
-    if (code) {
-      TokenApi.get(code)
-        .then(response => response.json())
-        .then(({ access_token: token }) => {
-          this.setState({ token });
-          TokenStorage.setToken(token);
-          window.location.search = '';
-          this.onToken(token);
-        })
-        .catch(this.onError.bind(this));
-      return;
-    }
-
-    if (token) {
-      this.onToken(token);
-      return;
-    }
-
+  const onError = (error) => {
     AuthorizationUrlGenerator.generate()
       .then((authorizationUrl) => {
-        this.setState({ authorizationUrl });
-      });
-  }
-
-  onError(error) {
-    AuthorizationUrlGenerator.generate()
-      .then((authorizationUrl) => {
-        this.setState({ authorizationUrl });
+        setAuthorizationUrl(authorizationUrl);
       });
 
     if (error.message === 'AUTHENTICATION_ERROR') {
-      this.setState({ reauthorize: true });
+      TokenStorage.removeToken();
+      setToken('');
     }
   }
 
-  onToken(token) {
-    this.onDeviceFetch();
-    new SpotifyPlayer(token, this.onDeviceFetch.bind(this));
+  const onToken = (token) => {
+    onDeviceFetch();
+    new SpotifyPlayer(token, onDeviceFetch);
     AlbumApi.get(token)
       .then(response => response.json())
       .then(({ total: albumTotal }) => {
-        this.setState({
-          albums: [...Array(albumTotal).keys()],
-          albumTotal,
-        });
+        setAlbumTotal(albumTotal);
+        setAlbumIndexes([...Array(albumTotal).keys()]);
       })
-      .catch(this.onError.bind(this));
+      .catch(onError);
   }
 
-  onDeviceChange({target: { value: deviceId }}) {
-    const { token } = this.state;
-    this.setState({ deviceId });
+  const onDeviceChange = ({target: { value: deviceId }}) => {
+    setDeviceId(deviceId);
     PlayApi.transfer(token, deviceId)
-      .catch(this.onError.bind(this));
+      .catch(onError);
   }
 
-  onDeviceFetch() {
-    const { token } = this.state;
-    this.setState({
-      devices: [],
-      deviceId: null,
-      devicesLoading: true,
-    });
+  const onDeviceFetch = () => {
+    setDevices([]);
+    setDeviceId('');
+    setDevicesLoading(true);
     DeviceApi.get(token)
       .then(response => response.json())
       .then(({ devices }) => {
         const deviceId = devices.filter(device => device.is_active).map(device => device.id)[0]
           || devices[0].id;
-        this.setState({
-          deviceId,
-          devices,
-          devicesLoading: false,
-        });
+        setDevices(devices);
+        setDeviceId(deviceId);
+        setDevicesLoading(false);
       })
-      .catch(this.onError.bind(this));
+      .catch(onError);
   }
 
-  onShuffle() {
-    const { albums, albumTotal, deviceId, token } = this.state;
-    const offset = albums.splice(Math.floor(Math.random() * albums.length), 1);
-    this.setState({
-      albums: albums.length !== 0
-        ? albums
-        : [...Array(albumTotal).keys()],
-    });
-    AlbumApi.get(token, offset)
+  const onShuffle = () => {
+    const index = albumIndexes.splice(Math.floor(Math.random() * albumIndexes.length), 1)[0];
+    setAlbumIndexes(albumIndexes.length === 0
+        ? [...Array(albumTotal).keys()]
+        : albumIndexes);
+    AlbumApi.get(token, index)
       .then(response => response.json())
-      .then(({ items, total }) => {
+      .then(({ items, total: albumTotal }) => {
         const album = items[0].album;
         PlayApi.play(token, album.uri, deviceId);
-        this.setState({
-          album,
-          albumTotal: total
-        });
+        setAlbum(album);
+        setAlbumTotal(albumTotal);
       })
-      .catch(this.onError.bind(this));
+      .catch(onError);
   }
 
-  render() {
-    const { album, albumTotal, authorizationUrl, deviceId, devices, devicesLoading, reauthorize, token } = this.state;
-    return (
-      <div className="app">
-        <h1>Shuffle Spotify Albums</h1>
-        <AuthorizeButton
-          authorizationUrl={authorizationUrl}
-          token={token}
-        />
-        <ReauthorizeButton
-          authorizationUrl={authorizationUrl}
-          reauthorize={reauthorize}
-        />
-        <AuthorizedComponents
-          album={album}
-          albumTotal={albumTotal}
-          deviceId={deviceId}
-          devices={devices}
-          devicesLoading={devicesLoading}
-          reauthorize={reauthorize}
-          token={token}
-          onDeviceChange={this.onDeviceChange.bind(this)}
-          onDeviceFetch={this.onDeviceFetch.bind(this)}
-          onShuffle={this.onShuffle.bind(this)}
-        />
-      </div>
-    );
-  }
-}
+  React.useEffect(() => {
+    const code = CodeExtractor.extract();
+    if (code) {
+      TokenApi.get(code)
+        .then(response => response.json())
+        .then(({ access_token: token }) => {
+          setToken(token);
+          TokenStorage.setToken(token);
+          window.location.search = '';
+          onToken(token);
+        })
+        .catch(onError);
+      return;
+    }
+
+    if (token) {
+      onToken(token);
+      return;
+    }
+
+    AuthorizationUrlGenerator.generate()
+      .then((authorizationUrl) => {
+        setAuthorizationUrl(authorizationUrl);
+      });
+  }, []);
+
+  return (
+    <div className="app">
+      <h1>Shuffle Spotify Albums</h1>
+      <AuthorizeButton
+        authorizationUrl={authorizationUrl}
+        token={token}
+      />
+      <AuthorizedComponents
+        album={album}
+        albumTotal={albumTotal}
+        deviceId={deviceId}
+        devices={devices}
+        isDevicesLoading={isDevicesLoading}
+        token={token}
+        onDeviceChange={onDeviceChange}
+        onDeviceFetch={onDeviceFetch}
+        onShuffle={onShuffle}
+      />
+    </div>
+  )
+};
 
 export default App;
